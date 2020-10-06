@@ -92,6 +92,16 @@ Example :
     const moment = await require("moment");
 ```
 
+## Console
+
+You can use console
+
+```
+
+console.log("some console write");
+
+```
+
 ### Contributors
 
 Now just me :D. You can send me pull request for contibution.
