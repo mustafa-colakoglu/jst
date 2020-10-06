@@ -2,6 +2,12 @@
     const query = await mysql.query("SELECT * FROM test");
     const [rows] = query;
     for(let i=0; i < rows.length; i++){
+        ?>
+        <b>
+        <?jst
         print(rows[i].name);
+        ?>
+        </b>
+        <?jst
     }
 ?>

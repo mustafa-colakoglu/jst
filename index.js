@@ -47,6 +47,7 @@ const resolve = async (page, req, res) => {
       output += text;
     };
     const obj = {
+      args: [],
       output: "",
       print,
       POST: req.body,
@@ -54,12 +55,12 @@ const resolve = async (page, req, res) => {
       setTimeout,
       mysql,
     };
-    vm.createContext(obj);
     let script = "";
     for (let i = 0; i < split.length; i++) {
       let temp = split[i];
       const split2 = temp.split("<?jst");
-      script += `print("${split2[0].trim()}")`;
+      obj.args.push(split2[0].trim());
+      script += `print(args[${obj.args.length - 1}])`;
       if (split2.length === 2) {
         script += split2[1];
       }
@@ -67,6 +68,7 @@ const resolve = async (page, req, res) => {
     script = `(async () => {
         ${script}
     })()`;
+    vm.createContext(obj);
     await vm.runInContext(script, obj);
     res.send(output);
   } else {
