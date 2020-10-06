@@ -4,6 +4,10 @@ Jst writing for build web page like PHP.
 
 Now you can use variables and print this variables
 
+## Installing
+
+Clone this repository, build pages on www ( page.jst ) and enjoy!
+
 ## Examples
 
 ```
