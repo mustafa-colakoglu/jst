@@ -55,15 +55,19 @@ const resolve = async (page, req, res) => {
       mysql,
     };
     vm.createContext(obj);
+    let script = "";
     for (let i = 0; i < split.length; i++) {
       let temp = split[i];
       const split2 = temp.split("<?jst");
-      output += split2[0];
+      script += `print("${split2[0].trim()}")`;
       if (split2.length === 2) {
-        const temp2 = split2[1].trim();
-        await vm.runInContext(temp2, obj);
+        script += split2[1];
       }
     }
+    script = `(async () => {
+        ${script}
+    })()`;
+    await vm.runInContext(script, obj);
     res.send(output);
   } else {
     res.statusCode = 404;

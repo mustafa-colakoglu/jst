@@ -1,8 +1,9 @@
 abc
 <?jst
     const sleep = (ms) => new Promise((resolve) => setTimeout(() => resolve(ms), ms));
-    sleep(1111).then(() => {
-        print("def");
-    });
+    await sleep(1000);
+    print("def");
+    await sleep(1000);
+    print("ghi")
 ?>
-ghi
+jkl
