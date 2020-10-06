@@ -45,7 +45,6 @@ app.post("/*", async (req, res) => {
     }
 })
 const resolve = async (page, req, res) => {
-    console.log(page)
     if(fs.existsSync(`./www/${page}.jst`)){
         const index = await (await readFile(`./www/${page}.jst`)).toString();
         const split = index.split("?>");
