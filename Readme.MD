@@ -1,6 +1,6 @@
 # JST
 
-Jst writing for build web page like PHP pages.
+Jst writing for build web page like PHP.
 
 Now you can use variables and print this variables
 
