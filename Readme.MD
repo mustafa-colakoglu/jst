@@ -29,6 +29,7 @@ Clone this repository, build pages on www ( page.jst ) and enjoy!
     </body>
 </html>
 ```
+
 ## POST and GET usage
 
 You can use POST and GET variables
@@ -46,6 +47,24 @@ or
     print(GET.name)
 ?>
 ```
+
+Using MySQL
+
+You can use MySQL.
+We are added mysql-promise package for MySQL support.
+
+Example :
+
+```
+<?jst
+    mysql.query("SELECT * FROM test").then(([rows] = results) => {
+        for(let i=0; i < rows.length; i++){
+            print(rows[i].name);
+        }
+    })
+?>
+```
+
 ### Contributors
 
 Now just me :D. You can send me pull request for contibution.

@@ -1,0 +1,7 @@
+<?jst
+    mysql.query("SELECT * FROM test").then(([rows] = results) => {
+        for(let i=0; i < rows.length; i++){
+            print(rows[i].name);
+        }
+    })
+?>
