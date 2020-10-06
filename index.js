@@ -1,37 +1,60 @@
+const express = require("express");
+const bodyParser = require('body-parser');
+const multer = require('multer');
 const fs = require("fs");
 const util = require("util");
-
-const exec = require("child_process").exec;
 const readFile = util.promisify(fs.readFile);
-const _eval = require("eval");
-(async() => {
-    const index = await (await readFile("./index.jst")).toString();
-    const split = index.split("?>");
-    let output = "test";
-    const test = _eval(`output="5"`, undefined, {output}, true);
-    console.log(output);
-    return;
-    // cmd.on("disconnect", (a,b) => console.log(a,b))
-    // cmd.on("close", (a,b,c) => console.log("closed",a,b, c))
-    // // cmd.on("error", (a,b) => console.log(a,b))
-    // cmd.on("exit", (a,b,c) => console.log("exited", a,b,c))
-    // cmd.on("message", (a,b) => console.log(a,b))
-    const print = (text) => {
-        output += text;
+const vm = require("vm");
+
+const app = express();
+app.use(express.json());
+app.use(bodyParser.urlencoded({ extended: true })); 
+const upload = multer();
+app.use(upload.array()); 
+app.use(express.static('htdocs'));
+
+app.listen(process.env.PORT || 80);
+app.get("/:page.jst", async (req, res) => {
+    resolve(req.params.page, req, res);
+});
+app.get("/", async (req, res) => {
+    resolve("index", req, res);
+});
+app.get("/*", async (req, res) => {
+    if(req.path.endsWith(".jst")){
+        resolve(req.path.substr(1, req.path.length), req, res);
     }
-    for(let i=0; i < split.length; i++){
-        let temp = split[i];
-        const split2 = temp.split("<?jst");
-        output += split2[0];
-        if(split2.length === 2){
-            const temp2 = split2[1].trim();
-            // const emit = cmd.emit(temp2);
+    else if(fs.existsSync(`./htdocs${req.path}`)){
+        res.sendFile(`./htdocs${req.path}`);
+    }
+    else{
+        res.statusCode = 404;
+        res.send("Not found on this server");
+    }
+});
+const resolve = async (page, req, res) => {
+    if(fs.existsSync(`./htdocs/${page}.jst`)){
+        const index = await (await readFile(`./htdocs/${page}.jst`)).toString();
+        const split = index.split("?>");
+        let output = "";
+        const print = (text) => {
+            output += text;
         }
-        // if(temp.startsWith("<?jst")){
-        //     temp = temp.substr("<?jst".length, temp.length).trimStart();
-        //     console.log(temp);
-        //     eval(temp);
-        // }
+        const obj = {output:"", print, POST:req.body, GET:req.query};
+        vm.createContext(obj);
+        for(let i=0; i < split.length; i++){
+            let temp = split[i];
+            const split2 = temp.split("<?jst");
+            output += split2[0];
+            if(split2.length === 2){
+                const temp2 = split2[1].trim();
+                vm.runInContext(temp2, obj);
+            }
+        }
+        res.send(output);
     }
-    // console.log(output);
-})();
+    else{
+        res.statusCode = 404;
+        res.send("Not found on this server");
+    }
+}
