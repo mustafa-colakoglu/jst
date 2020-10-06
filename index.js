@@ -6,12 +6,6 @@ const util = require("util");
 const readFile = util.promisify(fs.readFile);
 const vm = require("vm");
 const mysql = require("./services/mysql");
-mysql.query("SELECT * FROM test").then((results) => {
-  for (let i = 0; i < results[0].length; i++) {
-    console.log(results[0][i]);
-    // print(results[i].name);
-  }
-});
 const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
