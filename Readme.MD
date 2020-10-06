@@ -30,9 +30,11 @@ Clone this repository, build pages on www ( page.jst ) and enjoy!
 </html>
 ```
 
-## POST and GET usage
+## POST, GET and HEADERS usage
 
-You can use POST and GET variables
+You can use POST, GET and HEADERS variables
+
+### POST
 
 ```
 <?jst
@@ -40,11 +42,20 @@ You can use POST and GET variables
 ?>
 ```
 
-or
+### GET
 
 ```
 <?jst
     print(GET.name)
+?>
+```
+
+### HEADERS
+
+```
+<?jst
+    print(HEADERS.Authorization);
+    print(HEADERS["Content-Type"]);
 ?>
 ```
 

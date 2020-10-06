@@ -51,6 +51,7 @@ const resolve = async (page, req, res, justReturn = false) => {
       const obj = {
         args: [],
         output: "",
+        console,
         print,
         POST: req.body,
         GET: req.query,
