@@ -83,7 +83,7 @@ Example :
 ### For Async pages :
 
 ```
-    require("./other-async-page.jst");
+    await require("./other-async-page.jst");
 ```
 
 ### For Standarat Modules :
