@@ -57,11 +57,13 @@ Example :
 
 ```
 <?jst
-    mysql.query("SELECT * FROM test").then(([rows] = results) => {
-        for(let i=0; i < rows.length; i++){
-            print(rows[i].name);
-        }
-    })
+    const query = await mysql.query("SELECT * FROM test");
+    const [rows] = query;
+    for(let i=0; i < rows.length; i++){
+        print(rows[i].name);
+    }
+
+
 ?>
 ```
 
