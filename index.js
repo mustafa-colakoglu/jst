@@ -22,19 +22,32 @@ app.get("/", async (req, res) => {
 });
 app.get("/*", async (req, res) => {
     if(req.path.endsWith(".jst")){
-        resolve(req.path.substr(1, req.path.length), req, res);
+        resolve(req.originalUrl.substr(1, req.originalUrl.length), req, res);
     }
-    else if(fs.existsSync(`./htdocs${req.path}`)){
-        res.sendFile(`./htdocs${req.path}`);
+    else if(fs.existsSync(`./www${req.originalUrl}`)){
+        res.sendFile(`${__dirname}/www${req.originalUrl}`);
     }
     else{
         res.statusCode = 404;
         res.send("Not found on this server");
     }
 });
+app.post("/*", async (req, res) => {
+    if(req.path.endsWith(".jst")){
+        resolve(req.originalUrl.substr(1, req.originalUrl.length - 5), req, res);
+    }
+    else if(fs.existsSync(`./www${req.originalUrl}`)){
+        res.sendFile(`${__dirname}/www${req.originalUrl}`);
+    }
+    else{
+        res.statusCode = 404;
+        res.send("Not found on this server");
+    }
+})
 const resolve = async (page, req, res) => {
-    if(fs.existsSync(`./htdocs/${page}.jst`)){
-        const index = await (await readFile(`./htdocs/${page}.jst`)).toString();
+    console.log(page)
+    if(fs.existsSync(`./www/${page}.jst`)){
+        const index = await (await readFile(`./www/${page}.jst`)).toString();
         const split = index.split("?>");
         let output = "";
         const print = (text) => {
