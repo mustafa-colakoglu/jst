@@ -1,10 +1,10 @@
-#JST
+# JST
 
 Jst writing for build web page like PHP pages.
 
 Now you can use variables and print this variables
 
-##Examples
+## Examples
 
 ```
 <?jst
@@ -26,6 +26,6 @@ Now you can use variables and print this variables
 </html>
 ```
 
-###Contributors
+### Contributors
 
 Now just me :D. You can send me pull request for contibution.
