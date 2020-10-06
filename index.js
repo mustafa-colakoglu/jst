@@ -52,7 +52,7 @@ const resolve = async (page, req, res) => {
         const print = (text) => {
             output += text;
         }
-        const obj = {output:"", print, POST:req.body, GET:req.query};
+        const obj = {output:"", print, POST:req.body, GET:req.query, setTimeout};
         vm.createContext(obj);
         for(let i=0; i < split.length; i++){
             let temp = split[i];
@@ -60,7 +60,7 @@ const resolve = async (page, req, res) => {
             output += split2[0];
             if(split2.length === 2){
                 const temp2 = split2[1].trim();
-                vm.runInContext(temp2, obj);
+                await vm.runInContext(temp2, obj);
             }
         }
         res.send(output);
