@@ -52,6 +52,7 @@ const resolve = async (page, req, res) => {
       print,
       POST: req.body,
       GET: req.query,
+      HEADERS: req.headers,
       setTimeout,
       mysql,
     };
