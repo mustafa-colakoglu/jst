@@ -38,11 +38,12 @@ app.post("/*", async (req, res) => {
     res.send("Not found on this server");
   }
 });
-const resolve = async (page, req, res) => {
+const resolve = async (page, req, res, justReturn = true) => {
   try {
     if (fs.existsSync(`./www/${page}.jst`)) {
-      const index = await (await readFile(`./www/${page}.jst`)).toString();
-      const split = index.split("?>");
+      const fileContents = await (
+        await readFile(`./www/${page}.jst`)
+      ).toString();
       let output = "";
       const print = (text) => {
         output += text;
@@ -56,23 +57,26 @@ const resolve = async (page, req, res) => {
         HEADERS: req.headers,
         setTimeout,
         mysql,
+        require: async (moduleName = "") => {
+          if (moduleName.startsWith(".") && !moduleName.startsWith("..")) {
+            if (moduleName.endsWith(".jst")) {
+              const codes = await (
+                await readFile(`./www/${moduleName}`)
+              ).toString();
+              executeCodes(obj, codes);
+            } else {
+              return require(moduleName);
+            }
+          } else if (!moduleName.startsWith(".")) {
+            return require(moduleName);
+          }
+        },
       };
-      let script = "";
-      for (let i = 0; i < split.length; i++) {
-        let temp = split[i];
-        const split2 = temp.split("<?jst");
-        obj.args.push(split2[0].trim());
-        script += `print(args[${obj.args.length - 1}])`;
-        if (split2.length === 2) {
-          script += split2[1];
-        }
-      }
-      script = `(async () => {
-        ${script}
-    })()`;
-      vm.createContext(obj);
-      await vm.runInContext(script, obj);
-      res.send(output);
+      const code = await generateCode(obj, fileContents);
+      //   console.log(code);
+      const execute = await executeCodes(obj, code);
+      console.log(code);
+      res.send(execute);
     } else {
       res.statusCode = 404;
       res.send("Not found on this server");
@@ -81,4 +85,26 @@ const resolve = async (page, req, res) => {
     res.statusCode = 500;
     res.send(err.toString());
   }
+};
+const generateCode = async (obj, fileContents = "") => {
+  const split = fileContents.split("?>");
+  let script = "";
+  for (let i = 0; i < split.length; i++) {
+    let temp = split[i];
+    const split2 = temp.split("<?jst");
+    obj.args.push(split2[0].trim());
+    script += `print(args[${obj.args.length - 1}])`;
+    if (split2.length === 2) {
+      script += split2[1];
+    }
+  }
+  script = `(async () => {
+        ${script}
+    })()`;
+  return script;
+};
+const executeCodes = async (obj, script) => {
+  vm.createContext(obj);
+  await vm.runInContext(script, obj);
+  return obj.output;
 };
