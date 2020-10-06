@@ -25,7 +25,23 @@ Now you can use variables and print this variables
     </body>
 </html>
 ```
+## POST and GET usage
 
+You can use POST and GET variables
+
+```
+<?jst
+    print(POST.name)
+?>
+```
+
+or
+
+```
+<?jst
+    print(GET.name)
+?>
+```
 ### Contributors
 
 Now just me :D. You can send me pull request for contibution.
