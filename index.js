@@ -38,7 +38,7 @@ app.post("/*", async (req, res) => {
     res.send("Not found on this server");
   }
 });
-const resolve = async (page, req, res, justReturn = true) => {
+const resolve = async (page, req, res, justReturn = false) => {
   try {
     if (fs.existsSync(`./www/${page}.jst`)) {
       const fileContents = await (
@@ -60,10 +60,14 @@ const resolve = async (page, req, res, justReturn = true) => {
         require: async (moduleName = "") => {
           if (moduleName.startsWith(".") && !moduleName.startsWith("..")) {
             if (moduleName.endsWith(".jst")) {
-              const codes = await (
-                await readFile(`./www/${moduleName}`)
-              ).toString();
-              executeCodes(obj, codes);
+              const t = Date.now();
+              const requireResolve = await resolve(
+                moduleName.substr(0, moduleName.length - 4),
+                req,
+                res,
+                true
+              );
+              output += requireResolve;
             } else {
               return require(moduleName);
             }
@@ -74,14 +78,16 @@ const resolve = async (page, req, res, justReturn = true) => {
       };
       const code = await generateCode(obj, fileContents);
       //   console.log(code);
-      const execute = await executeCodes(obj, code);
-      console.log(code);
-      res.send(execute);
+      await executeCodes(obj, code);
+      if (justReturn) return output;
+      res.send(output);
     } else {
+      if (justReturn) return "Not found on this server";
       res.statusCode = 404;
       res.send("Not found on this server");
     }
   } catch (err) {
+    if (justReturn) return err.toString();
     res.statusCode = 500;
     res.send(err.toString());
   }
@@ -106,5 +112,4 @@ const generateCode = async (obj, fileContents = "") => {
 const executeCodes = async (obj, script) => {
   vm.createContext(obj);
   await vm.runInContext(script, obj);
-  return obj.output;
 };
