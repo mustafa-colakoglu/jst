@@ -39,41 +39,46 @@ app.post("/*", async (req, res) => {
   }
 });
 const resolve = async (page, req, res) => {
-  if (fs.existsSync(`./www/${page}.jst`)) {
-    const index = await (await readFile(`./www/${page}.jst`)).toString();
-    const split = index.split("?>");
-    let output = "";
-    const print = (text) => {
-      output += text;
-    };
-    const obj = {
-      args: [],
-      output: "",
-      print,
-      POST: req.body,
-      GET: req.query,
-      HEADERS: req.headers,
-      setTimeout,
-      mysql,
-    };
-    let script = "";
-    for (let i = 0; i < split.length; i++) {
-      let temp = split[i];
-      const split2 = temp.split("<?jst");
-      obj.args.push(split2[0].trim());
-      script += `print(args[${obj.args.length - 1}])`;
-      if (split2.length === 2) {
-        script += split2[1];
+  try {
+    if (fs.existsSync(`./www/${page}.jst`)) {
+      const index = await (await readFile(`./www/${page}.jst`)).toString();
+      const split = index.split("?>");
+      let output = "";
+      const print = (text) => {
+        output += text;
+      };
+      const obj = {
+        args: [],
+        output: "",
+        print,
+        POST: req.body,
+        GET: req.query,
+        HEADERS: req.headers,
+        setTimeout,
+        mysql,
+      };
+      let script = "";
+      for (let i = 0; i < split.length; i++) {
+        let temp = split[i];
+        const split2 = temp.split("<?jst");
+        obj.args.push(split2[0].trim());
+        script += `print(args[${obj.args.length - 1}])`;
+        if (split2.length === 2) {
+          script += split2[1];
+        }
       }
-    }
-    script = `(async () => {
+      script = `(async () => {
         ${script}
     })()`;
-    vm.createContext(obj);
-    await vm.runInContext(script, obj);
-    res.send(output);
-  } else {
-    res.statusCode = 404;
-    res.send("Not found on this server");
+      vm.createContext(obj);
+      await vm.runInContext(script, obj);
+      res.send(output);
+    } else {
+      res.statusCode = 404;
+      res.send("Not found on this server");
+    }
+  } catch (err) {
+    res.statusCode = 500;
+    res.send(err.toString());
   }
 };
