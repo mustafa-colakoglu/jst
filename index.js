@@ -55,7 +55,6 @@ const resolve = async (page, req, res, justReturn = false) => {
         POST: req.body,
         GET: req.query,
         HEADERS: req.headers,
-        setTimeout,
         require: async (moduleName = "") => {
           if (moduleName.startsWith(".")) {
             if (moduleName.endsWith(".jst")) {

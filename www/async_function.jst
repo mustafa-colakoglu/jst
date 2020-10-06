@@ -1,5 +1,6 @@
 abc
 <?jst
+    const setTimeout = await require("./utils/setTimeout.js");
     const sleep = (ms) => new Promise((resolve) => setTimeout(() => resolve(ms), ms));
     await sleep(1000);
     print("def");
