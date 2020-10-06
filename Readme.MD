@@ -48,7 +48,7 @@ or
 ?>
 ```
 
-Using MySQL
+## Using MySQL
 
 You can use MySQL.
 We are added mysql-promise package for MySQL support.
@@ -65,6 +65,20 @@ Example :
 
 
 ?>
+```
+
+## Require other modules or pages
+
+### For Async pages :
+
+```
+    require("./other-async-page.jst");
+```
+
+### For Standarat Modules :
+
+```
+    require("moment");
 ```
 
 ### Contributors

@@ -58,9 +58,8 @@ const resolve = async (page, req, res, justReturn = false) => {
         setTimeout,
         mysql,
         require: async (moduleName = "") => {
-          if (moduleName.startsWith(".") && !moduleName.startsWith("..")) {
+          if (moduleName.startsWith(".")) {
             if (moduleName.endsWith(".jst")) {
-              const t = Date.now();
               const requireResolve = await resolve(
                 moduleName.substr(0, moduleName.length - 4),
                 req,
