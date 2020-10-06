@@ -78,7 +78,7 @@ Example :
 ### For Standarat Modules :
 
 ```
-    require("moment");
+    const moment = await require("moment");
 ```
 
 ### Contributors

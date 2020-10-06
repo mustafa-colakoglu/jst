@@ -56,7 +56,6 @@ const resolve = async (page, req, res, justReturn = false) => {
         GET: req.query,
         HEADERS: req.headers,
         setTimeout,
-        mysql,
         require: async (moduleName = "") => {
           if (moduleName.startsWith(".")) {
             if (moduleName.endsWith(".jst")) {
