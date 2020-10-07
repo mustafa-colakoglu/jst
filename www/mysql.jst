@@ -1,5 +1,5 @@
 <?jst
-    const mysql = await require("./services/mysql.js");
+    const mysql = require("./services/mysql.js");
     const query = await mysql.query("SELECT * FROM test");
     const [rows] = query;
     for(let i=0; i < rows.length; i++){

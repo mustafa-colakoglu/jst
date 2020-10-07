@@ -5,7 +5,6 @@ const fs = require("fs");
 const util = require("util");
 const readFile = util.promisify(fs.readFile);
 const vm = require("vm");
-const mysql = require("./services/mysql");
 const app = express();
 app.use(express.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -56,16 +55,19 @@ const resolve = async (page, req, res, justReturn = false) => {
         POST: req.body,
         GET: req.query,
         HEADERS: req.headers,
-        require: async (moduleName = "") => {
+        require: (moduleName = "") => {
           if (moduleName.startsWith(".")) {
             if (moduleName.endsWith(".jst")) {
-              const requireResolve = await resolve(
-                moduleName.substr(0, moduleName.length - 4),
-                req,
-                res,
-                true
-              );
-              output += requireResolve;
+              return new Promise(async (r) => {
+                const requireResolve = await resolve(
+                  moduleName.substr(0, moduleName.length - 4),
+                  req,
+                  res,
+                  true
+                );
+                output += requireResolve;
+                r();
+              });
             } else {
               return require(moduleName);
             }
@@ -75,7 +77,6 @@ const resolve = async (page, req, res, justReturn = false) => {
         },
       };
       const code = await generateCode(obj, fileContents);
-      console.log(code);
       await executeCodes(obj, code);
       if (justReturn) return output;
       res.send(output);

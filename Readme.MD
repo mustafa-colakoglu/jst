@@ -89,7 +89,7 @@ Example :
 ### For Standarat Modules :
 
 ```
-    const moment = await require("moment");
+    const moment = require("moment");
 ```
 
 ## Console
