@@ -92,6 +92,19 @@ Example :
     const moment = require("moment");
 ```
 
+### You can pass data to required page
+
+```
+    const data = "test data";
+    await require("./partial-page.jst", {data});
+```
+
+partial-page.jst
+
+<?jst
+    print(data);
+?>
+
 ## Console
 
 You can use console
