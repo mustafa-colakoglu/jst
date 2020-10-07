@@ -3,7 +3,9 @@ const util = require("util");
 const readFile = util.promisify(fs.readFile);
 const generateCode = require("./generateCode");
 const executeCode = require("./executeCode");
+const splitDots = require("./splitDots");
 const resolvePage = async (page, req, res, justReturn = false) => {
+  page = splitDots(page);
   try {
     if (fs.existsSync(`${__dirname}/../www/${page}.jst`)) {
       const fileContents = await (
