@@ -2,7 +2,7 @@
 
 Jst writing for build web page like PHP.
 
-Now you can use variables and print this variables
+Now you can use variables and print this variables, require modules , own modules and another pages.
 
 ## Installing
 
