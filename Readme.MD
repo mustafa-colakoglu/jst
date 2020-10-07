@@ -101,9 +101,12 @@ Example :
 
 partial-page.jst
 
+```
 <?jst
     print(data);
 ?>
+
+```
 
 ## Console
 
