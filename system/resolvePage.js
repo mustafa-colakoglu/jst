@@ -4,7 +4,7 @@ const readFile = util.promisify(fs.readFile);
 const generateCode = require("./generateCode");
 const executeCode = require("./executeCode");
 const splitDots = require("./splitDots");
-const resolvePage = async (page, req, res, justReturn = false) => {
+const resolvePage = async (page, req, res, justReturn = false, data) => {
   page = splitDots(page);
   try {
     if (fs.existsSync(`${__dirname}/../www/${page}.jst`)) {
@@ -23,7 +23,8 @@ const resolvePage = async (page, req, res, justReturn = false) => {
         POST: req.body,
         GET: req.query,
         HEADERS: req.headers,
-        require: (moduleName = "") => {
+        ...data,
+        require: (moduleName = "", partialData = {}) => {
           if (moduleName.startsWith(".")) {
             if (moduleName.endsWith(".jst")) {
               return new Promise(async (r) => {
@@ -31,7 +32,8 @@ const resolvePage = async (page, req, res, justReturn = false) => {
                   moduleName.substr(0, moduleName.length - 4),
                   req,
                   res,
-                  true
+                  true,
+                  partialData
                 );
                 output += requireResolve;
                 r();
