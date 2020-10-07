@@ -1,0 +1,36 @@
+<html>
+    <head>
+        <title>Sum Function</title>
+    </head>
+    <body>
+        <?jst
+            if(Object.keys(POST).includes("number1") && Object.keys(POST).includes("number2")){
+                const number1 = parseInt(POST.number1);
+                const number2 = parseInt(POST.number2);
+                if(!isNaN(number1) && !isNaN(number2)){
+                    const sum = number1 + number2;
+                    ?>
+                        Sum : <?jst print(sum); ?><br />
+                        <a href="/form.jst">Try Again</a>
+                    <?jst
+                }
+                else{
+                    ?>
+                    Wrong parameters! <br />
+                        <a href="/form.jst">Try Again</a>
+                    <?jst
+                }
+            }
+            else{
+        ?>
+        <h3>Sum Function</h3>
+        <form method="post">
+            <input type="number" placeholder="Number 1" name="number1" /> <br />
+            <input type="number" placeholder="Number 2" name="number2" /> <br />
+            <button type="submit">Sum</button>
+        </form>
+        <?jst
+        }
+        ?>
+    </body>
+</html>
