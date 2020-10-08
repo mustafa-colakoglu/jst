@@ -57,47 +57,50 @@ const resolvePage = async (page, req, res, justReturn = false, data) => {
       res.send(`${page}.jst not found on this server`);
     }
   } catch (err) {
-    let returnError = err.toString() + " : <br />";
-    const splitError = err.stack.split("evalmachine.<anonymous>:")[1];
-    let upLen = 0;
-    let finded = false;
-    for (let i = splitError.length; i > -1; i--) {
-      if (!finded && splitError.substr(i, 1) == "^") {
-        finded = true;
-        upLen++;
-      } else if (finded && splitError.substr(i, 1) === "^") upLen++;
-      else if (finded && splitError.substr(i, 1) === " ") break;
-    }
-    let up = "";
-    for (let i = 0; i < upLen; i++) {
-      up += "^";
-    }
-    let splitUp = splitError.substr(1, splitError.length).split(up);
-    const splitN = splitUp[0].split("\n");
-    const showErrorLine = splitN[splitN.length - 1];
-    let codeLine = "";
-    for (let i = 0; i < splitN.length - 1; i++) {
-      codeLine += splitN[i];
-    }
-    let whiteSpaceLen = 0;
-    for (let i = 0; i < showErrorLine.length; i++) {
-      if (showErrorLine.substr(i, 1) === " ") {
-        whiteSpaceLen++;
+    let returnError = "";
+    if (process.NODE_ENV !== "production") {
+      returnError = err.toString() + " : <br />";
+      const splitError = err.stack.split("evalmachine.<anonymous>:")[1];
+      let upLen = 0;
+      let finded = false;
+      for (let i = splitError.length; i > -1; i--) {
+        if (!finded && splitError.substr(i, 1) == "^") {
+          finded = true;
+          upLen++;
+        } else if (finded && splitError.substr(i, 1) === "^") upLen++;
+        else if (finded && splitError.substr(i, 1) === " ") break;
       }
+      let up = "";
+      for (let i = 0; i < upLen; i++) {
+        up += "^";
+      }
+      let splitUp = splitError.substr(1, splitError.length).split(up);
+      const splitN = splitUp[0].split("\n");
+      const showErrorLine = splitN[splitN.length - 1];
+      let codeLine = "";
+      for (let i = 0; i < splitN.length - 1; i++) {
+        codeLine += splitN[i];
+      }
+      let whiteSpaceLen = 0;
+      for (let i = 0; i < showErrorLine.length; i++) {
+        if (showErrorLine.substr(i, 1) === " ") {
+          whiteSpaceLen++;
+        }
+      }
+      let errorCodeString = "";
+      for (let i = 0; i < codeLine.length; i++) {
+        if (i < whiteSpaceLen) errorCodeString += codeLine.substr(i, 1);
+        else if (i === whiteSpaceLen)
+          errorCodeString += `<span style="color:red; font-weight:bold">${codeLine.substr(
+            i,
+            1
+          )}`;
+        else if (i < codeLine.length - 1)
+          errorCodeString += codeLine.substr(i, 1);
+        else errorCodeString += `${codeLine.substr(i, 1)}</span>`;
+      }
+      returnError += errorCodeString;
     }
-    let errorCodeString = "";
-    for (let i = 0; i < codeLine.length; i++) {
-      if (i < whiteSpaceLen) errorCodeString += codeLine.substr(i, 1);
-      else if (i === whiteSpaceLen)
-        errorCodeString += `<span style="color:red; font-weight:bold">${codeLine.substr(
-          i,
-          1
-        )}`;
-      else if (i < codeLine.length - 1)
-        errorCodeString += codeLine.substr(i, 1);
-      else errorCodeString += `${codeLine.substr(i, 1)}</span>`;
-    }
-    returnError += errorCodeString;
     if (justReturn) return returnError;
     res.header("Content-Type", "text/html");
     res.statusCode = 500;
