@@ -44,7 +44,7 @@ const resolvePage = async (page, req, res, justReturn = false, data) => {
         await readFile(`${__dirname}/../www/${page}.jst`)
       ).toString();
       const code = await generateCode(obj, fileContents);
-      await executeCode(vm, obj, code);
+      await executeCode(vm, obj, code, page);
       if (justReturn) return obj.output;
       res.send(obj.output);
     } else {
@@ -55,8 +55,9 @@ const resolvePage = async (page, req, res, justReturn = false, data) => {
   } catch (err) {
     let returnError = "";
     if (process.NODE_ENV !== "production") {
-      returnError = err.toString() + " : <br />";
-      const splitError = err.stack.split("evalmachine.<anonymous>:")[1];
+      returnError = err.toString() + ` <b>${page}.jst</b> : <br />`;
+      // console.log(err.stack);
+      const splitError = (err.stack.split(`${page}.jst:`)[1]);
       let upLen = 0;
       let finded = false;
       for (let i = splitError.length; i > -1; i--) {
