@@ -7,15 +7,10 @@ const splitDots = require("./splitDots");
 const vm = require("vm");
 const resolvePage = async (page, req, res, justReturn = false, data) => {
   page = splitDots(page);
-  let output = "";
-  const print = (text) => {
-    output += text;
-  };
   const obj = {
     args: [],
     output: "",
     console,
-    print,
     POST: req.body,
     GET: req.query,
     HEADERS: req.headers,
@@ -31,7 +26,7 @@ const resolvePage = async (page, req, res, justReturn = false, data) => {
               true,
               partialData
             );
-            output += requireResolve;
+            addToOutput(requireResolve);
             r();
           });
         } else {
@@ -42,6 +37,7 @@ const resolvePage = async (page, req, res, justReturn = false, data) => {
       }
     },
   };
+  const addToOutput = (add = "") => obj.output += add;
   try {
     if (fs.existsSync(`${__dirname}/../www/${page}.jst`)) {
       const fileContents = await (
@@ -49,8 +45,8 @@ const resolvePage = async (page, req, res, justReturn = false, data) => {
       ).toString();
       const code = await generateCode(obj, fileContents);
       await executeCode(vm, obj, code);
-      if (justReturn) return output;
-      res.send(output);
+      if (justReturn) return obj.output;
+      res.send(obj.output);
     } else {
       if (justReturn) return `${page}.jst not found on this server`;
       res.statusCode = 404;

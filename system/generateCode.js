@@ -11,6 +11,9 @@ const generateCode = async (obj, fileContents = "") => {
     }
   }
   script = `(async () => {
+            const print = (text) => {
+              output += text;
+            };
             ${script}
         })()`;
   return script;

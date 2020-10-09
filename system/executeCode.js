@@ -5,6 +5,5 @@ const executeCode = async (vm, obj, code) => {
     lineOffset: 0,
     displayErrors: true,
   });
-  // await vm.runInContext(script, obj);
 };
 module.exports = executeCode;
