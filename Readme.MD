@@ -1,6 +1,6 @@
 # JST
 
-Jst writing for build web page like PHP.
+Jst writing for build web page like PHP. So, faster.
 
 Now you can use variables and print this variables, require modules , own modules and another pages.
 
