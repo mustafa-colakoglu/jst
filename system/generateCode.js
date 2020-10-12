@@ -1,4 +1,4 @@
-const generateCode = async (obj, fileContents = "") => {
+const generateCode =  (obj, fileContents = "") => {
   const split = fileContents.split("?>");
   let script = "";
   for (let i = 0; i < split.length; i++) {

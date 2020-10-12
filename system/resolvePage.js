@@ -1,11 +1,9 @@
 const fs = require("fs");
-const util = require("util");
-const readFile = util.promisify(fs.readFile);
 const generateCode = require("./generateCode");
 const executeCode = require("./executeCode");
 const splitDots = require("./splitDots");
 const vm = require("vm");
-const resolvePage = async (page, req, res, justReturn = false, data) => {
+const resolvePage =  async (page, req, res, justReturn = false, data) => {
   page = splitDots(page);
   const obj = {
     args: [],
@@ -40,10 +38,8 @@ const resolvePage = async (page, req, res, justReturn = false, data) => {
   const addToOutput = (add = "") => obj.output += add;
   try {
     if (fs.existsSync(`${__dirname}/../www/${page}.jst`)) {
-      const fileContents = await (
-        await readFile(`${__dirname}/../www/${page}.jst`)
-      ).toString();
-      const code = await generateCode(obj, fileContents);
+      const fileContents = fs.readFileSync(`${__dirname}/../www/${page}.jst`, 'utf8');
+      const code = generateCode(obj, fileContents);
       await executeCode(vm, obj, code);
       if (justReturn) return obj.output;
       res.send(obj.output);
