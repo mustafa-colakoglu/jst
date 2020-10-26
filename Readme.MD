@@ -86,7 +86,7 @@ Example :
     await require("./other-async-page.jst");
 ```
 
-### For Standarat Modules :
+### For Standart Modules :
 
 ```
     const moment = require("moment");
