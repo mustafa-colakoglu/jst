@@ -1,21 +1,33 @@
-const generateCode =  (obj, fileContents = "") => {
-  const split = fileContents.split("?>");
-  let script = "";
-  for (let i = 0; i < split.length; i++) {
-    let temp = split[i];
-    const split2 = temp.split("<?jst");
-    obj.args.push(split2[0]);
-    script += `print(args[${obj.args.length - 1}]);`;
-    if (split2.length === 2) {
-      script += split2[1];
-    }
-  }
-  script = `(async () => {
-            const print = (text) => {
-              output += text;
-            };
-            ${script}
-        })()`;
-  return script;
+const generateCode = (obj, fileContents = '') => {
+	let script = '';
+	let lastIndex = 0;
+	const regex =
+		/<\?jst((?:(?!<\?jst|\?>)[^"'`/]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\/\/.*?(?:\r?\n|$)|\/\*[\s\S]*?\*\/)*)\?>/g;
+	let match;
+
+	while ((match = regex.exec(fileContents)) !== null) {
+		if (match.index > lastIndex) {
+			const htmlContent = fileContents.slice(lastIndex, match.index);
+			obj.args.push(htmlContent);
+			script += `print(args[${obj.args.length - 1}]);`;
+		}
+		script += match[1];
+
+		lastIndex = regex.lastIndex;
+	}
+	if (lastIndex < fileContents.length) {
+		const remainingHtml = fileContents.slice(lastIndex);
+		obj.args.push(remainingHtml);
+		script += `print(args[${obj.args.length - 1}]);`;
+	}
+
+	script = `(async () => {
+    const print = (text) => {
+      output += text;
+    };
+    ${script}
+  })()`;
+	return script;
 };
+
 module.exports = generateCode;
