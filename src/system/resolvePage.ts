@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import generateCode from "./generateCode";
 import executeCode from "./executeCode";
 import splitDots from "./splitDots";
-import vm from "vm";
+
 const resolvePage = async (
 	page: string,
 	req: Request,
@@ -50,7 +50,7 @@ const resolvePage = async (
 				"utf8",
 			);
 			const code = generateCode(obj, fileContents);
-			await executeCode(vm, obj, code);
+			await executeCode(obj, code);
 			if (justReturn) return obj.output;
 			res.send(obj.output);
 		} else {

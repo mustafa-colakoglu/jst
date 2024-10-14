@@ -1,4 +1,6 @@
-const executeCode = async (vm: any, obj: any, code: string) => {
+import vm from "vm";
+
+const executeCode = async (obj: any, code: string) => {
 	const context = vm.createContext(obj);
 	const script = new vm.Script(code);
 	await script.runInContext(context, {
