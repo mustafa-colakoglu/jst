@@ -1,0 +1,21 @@
+{
+	// this config is for backend projects
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "ESNext",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": false,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"typeRoots": ["src/types"],
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noPropertyAccessFromIndexSignature": false,
+		"moduleResolution": "Bundler",
+		"isolatedModules": false,
+		"allowJs": true,
+		"outDir": "dist"
+	}
+}
