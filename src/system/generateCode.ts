@@ -1,5 +1,5 @@
-const generateCode = (obj, fileContents = '') => {
-	let script = '';
+const generateCode = (obj: any, fileContents = "") => {
+	let script = "";
 	let lastIndex = 0;
 	const regex =
 		/<\?jst((?:(?!<\?jst|\?>)[^"'`/]|"(?:\\.|[^"\\])*"|'(?:\\.|[^'\\])*'|`(?:\\.|[^`\\])*`|\/\/.*?(?:\r?\n|$)|\/\*[\s\S]*?\*\/)*)\?>/g;
@@ -30,4 +30,4 @@ const generateCode = (obj, fileContents = '') => {
 	return script;
 };
 
-module.exports = generateCode;
+export default generateCode;

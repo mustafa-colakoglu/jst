@@ -1,8 +1,7 @@
 {
-	// this config is for backend projects
 	"compilerOptions": {
 		"target": "ESNext",
-		"module": "ESNext",
+		"module": "CommonJS",
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
 		"strict": true,
@@ -13,7 +12,7 @@
 		"noUnusedLocals": false,
 		"noUnusedParameters": false,
 		"noPropertyAccessFromIndexSignature": false,
-		"moduleResolution": "Bundler",
+		"moduleResolution": "Node",
 		"isolatedModules": false,
 		"allowJs": true,
 		"outDir": "dist"
