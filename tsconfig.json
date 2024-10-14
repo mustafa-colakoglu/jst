@@ -1,0 +1,20 @@
+{
+	"compilerOptions": {
+		"target": "ESNext",
+		"module": "CommonJS",
+		"esModuleInterop": true,
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"skipLibCheck": false,
+		"experimentalDecorators": true,
+		"emitDecoratorMetadata": true,
+		"typeRoots": ["src/types"],
+		"noUnusedLocals": false,
+		"noUnusedParameters": false,
+		"noPropertyAccessFromIndexSignature": false,
+		"moduleResolution": "Node",
+		"isolatedModules": false,
+		"allowJs": true,
+		"outDir": "dist"
+	}
+}
