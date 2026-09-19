@@ -1,20 +1,16 @@
 {
 	"compilerOptions": {
-		"target": "ESNext",
+		"target": "ES2022",
 		"module": "CommonJS",
+		"moduleResolution": "Node",
+		"lib": ["ES2022"],
+		"rootDir": "src",
+		"outDir": "dist",
+		"declaration": true,
+		"strict": true,
 		"esModuleInterop": true,
 		"forceConsistentCasingInFileNames": true,
-		"strict": true,
-		"skipLibCheck": false,
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true,
-		"typeRoots": ["src/types"],
-		"noUnusedLocals": false,
-		"noUnusedParameters": false,
-		"noPropertyAccessFromIndexSignature": false,
-		"moduleResolution": "Node",
-		"isolatedModules": false,
-		"allowJs": true,
-		"outDir": "dist"
-	}
+		"skipLibCheck": true
+	},
+	"include": ["src/index.ts", "src/parser.ts", "src/react.ts"]
 }

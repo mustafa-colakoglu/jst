@@ -1,7 +1,6 @@
 abc
 <?jst
-    const setTimeout = require("./utils/setTimeout.js");
-    const sleep = (ms) => new Promise((resolve) => setTimeout(() => resolve(ms), ms));
+    const sleep = require("node:timers/promises").setTimeout;
     await sleep(1000);
     print("def");
     await sleep(1000);

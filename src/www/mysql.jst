@@ -1,5 +1,5 @@
 <?jst
-    const mysql = require("./services/mysql.js");
+    // Pass an application-owned mysql client in renderFile(..., { mysql }).
     const query = await mysql.query("SELECT * FROM test");
     const [rows] = query;
     for(let i=0; i < rows.length; i++){
@@ -11,5 +11,4 @@
         </b>
         <?jst
     }
-    console.log("some console write");
 ?>

@@ -1,123 +1,125 @@
 # JST
 
-Jst writing for build web page like PHP. All your Javascript codes runs in V8 engine. So, faster.
+JST, içinde JavaScript çalıştırılabilen bir Node.js template engine'dir. Kendisi sunucu başlatmaz.
 
-Now you can use variables and print this variables, require modules , own modules and another pages.
+## Kurulum
 
-## Installing
+Yayımlanmış paketi kurmak için:
 
-Clone this repository, build pages on www ( page.jst ) and enjoy!
-
-## Examples
-
-```
-<?jst
-    const title = "test page";
-    const content = "test content";
-?>
-<html>
-    <head>
-        <title><?jst
-            print(title);
-        ?></title>
-    </head>
-    <body>
-        <?jst
-            print(content);
-        ?>
-        <img src="/test.png" />
-    </body>
-</html>
+```sh
+npm install @mini2/jst
 ```
 
-## POST, GET and HEADERS usage
+Bu depodan yerel tarball üretmek için `npm install`, ardından `npm pack` çalıştırın. Oluşan dosya `mini2-jst-1.0.0.tgz` biçimindedir ve `npm install ./mini2-jst-1.0.0.tgz` ile kurulabilir. Node.js 18 veya üstü gerekir.
 
-You can use POST, GET and HEADERS variables
+## Sözdizimi
 
-### POST
-
-```
-<?jst
-    print(POST.name)
-?>
-```
-
-### GET
-
-```
-<?jst
-    print(GET.name)
-?>
+```jst
+<?jst const title = "Merhaba"; ?>
+<h1><?jst= title ?></h1>
+<?jst for (const item of items) { ?>
+  <p><?jst= item ?></p>
+<?jst } ?>
+<?jst- trustedHtml ?>
 ```
 
-### HEADERS
+| Biçim | Anlamı |
+| --- | --- |
+| `<?jst ... ?>` | JavaScript çalıştırır. `await` kullanılabilir. |
+| `<?jst= ifade ?>` | İfadeyi HTML karakterlerini kaçırarak yazdırır. |
+| `<?jst- ifade ?>` | İfadeyi ham HTML olarak yazdırır. |
+| `print(değer)` | Eski şablonlarla uyumlu ham çıktı üretir. |
+| `printEscaped(değer)` | HTML karakterlerini kaçırarak çıktı üretir. |
 
-```
-<?jst
-    print(HEADERS.Authorization);
-    print(HEADERS["Content-Type"]);
-?>
-```
+Şablon içindeki JavaScript, Node.js'in `vm` modülünde çalışır. `vm` güvenlik sınırı değildir; yalnızca güvendiğiniz şablonları çalıştırın. JSX sözdizimi `.jst` dosyası içinde derlenmez; React öğelerini uygulama kodunda oluşturup şablona geçirin.
 
-## Using MySQL
+## Kullanım
 
-You can use MySQL.
-We are added mysql-promise package for MySQL support.
+```js
+const { render, renderFile, compile } = require("@mini2/jst");
 
-Example :
+const html = await render("<h1><?jst= title ?></h1>", { title: "A&B" });
+// <h1>A&amp;B</h1>
 
-```
-<?jst
-    const query = await mysql.query("SELECT * FROM test");
-    const [rows] = query;
-    for(let i=0; i < rows.length; i++){
-        print(rows[i].name);
-    }
+const page = compile("<p><?jst= name ?></p>");
+await page({ name: "Ada" });
+await page({ name: "Deniz" });
 
-
-?>
+await renderFile("./views/home.jst", { title: "Ana sayfa" });
 ```
 
-## Require other modules or pages
+`render` ve `renderFile` her zaman `Promise<string>` döndürür. Şablon değişkenleri ikinci argümandaki nesneden gelir. Eski HTTP değişkenleri uygulama tarafından açıkça verilebilir: `renderFile("view.jst", { GET: req.query, POST: req.body, HEADERS: req.headers })`.
 
-### For Async pages :
+Veritabanı bağlantısı da uygulamanın sorumluluğundadır. Örneğin mevcut `src/www/mysql.jst` örneğini `renderFile("src/www/mysql.jst", { mysql: dbClient })` ile kullanabilirsiniz.
 
-```
-    await require("./other-async-page.jst");
-```
+### Parçalar ve modüller
 
-### For Standart Modules :
+`include` yolu, onu çağıran `.jst` dosyasına göre çözülür ve HTML döndürür:
 
-```
-    const moment = require("moment");
+```jst
+<?jst print(await include("./card.jst", { name: "Ada" })); ?>
 ```
 
-### You can pass data to required page
+Eski `await require("./card.jst", { name: "Ada" })` kullanımı da parçayı doğrudan çıktıya ekler. Diğer `require(...)` çağrıları, dosyanın konumuna göre normal Node.js modüllerini yükler. Döngüsel parça çağrıları hata verir.
 
-```
-    const data = "test data";
-    await require("./partial-page.jst", {data});
-```
+### Express ile
 
-partial-page.jst
+Express uygulaması paketi isteğe bağlı olarak kendi sunucusuna bağlayabilir:
 
-```
-<?jst
-    print(data);
-?>
+```js
+const express = require("express");
+const { __express } = require("@mini2/jst");
+const app = express();
 
-```
-
-## Console
-
-You can use console
-
+app.engine("jst", __express);
+app.set("views", "./views");
+app.set("view engine", "jst");
+app.get("/", (req, res) => res.render("home", { title: "Ana sayfa" }));
+app.listen(3000);
 ```
 
-console.log("some console write");
+### React ile
 
+React desteği için ayrıca `react` ve `react-dom` kurun:
+
+```sh
+npm install react react-dom
 ```
 
-### Contributors
+```js
+const React = require("react");
+const { renderFile } = require("@mini2/jst");
+const card = React.createElement("strong", null, "Merhaba");
+const html = await renderFile("./views/page.jst", { card });
+```
 
-Now just me :D. You can send me pull request for contibution.
+`page.jst`:
+
+```jst
+<main><?jst- renderReact(card) ?></main>
+```
+
+`renderReact(element)` statik HTML üretir. Etkileşimli bir React ağacı için `renderReact(element, { hydrate: true })` kullanın ve istemci kodunda aynı ağacı `hydrateRoot` ile bağlayın. React sunucu render işleminin sınırlamaları için [React belgelerine](https://react.dev/reference/react-dom/server) bakın.
+
+## Geliştirme
+
+```sh
+npm test
+npm pack --dry-run
+```
+
+Paket yalnızca derlenmiş `dist` dosyalarını yayımlar. TypeScript tür tanımları paketle birlikte gelir.
+
+## Yayınlama
+
+`@mini2` kapsamına yayınlama yetkisi olan npm hesabıyla giriş yaptıktan sonra:
+
+```sh
+npm whoami
+npm run release:check
+npm run release
+```
+
+`release:check`, yayınlanacak dosyaları ve yaşam döngüsü betiklerini gerçek yayın yapmadan kontrol eder. `release`, paketi npm kayıt defterine herkese açık olarak yayımlar. Her gerçek yayından önce `prepublishOnly` testleri çalıştırır; `prepack` derlenmiş dosyaları hazırlar. Aynı sürüm tekrar yayımlanamaz.
+
+Sonraki sürüm için değişikliğin türüne göre `npm run bump:patch`, `npm run bump:minor` veya `npm run bump:major` çalıştırın; ardından `npm run release:check` ve `npm run release` kullanın. Bu komutlar `package.json` ile `package-lock.json` sürümünü birlikte günceller; otomatik Git commit'i veya etiketi oluşturmaz.

@@ -1,29 +1,47 @@
 {
-	"name": "jst",
+	"name": "@mini2/jst",
 	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
+	"description": "JavaScript template engine for Node.js with optional React rendering",
+	"main": "./dist/index.js",
+	"types": "./dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"require": "./dist/index.js",
+			"default": "./dist/index.js"
+		}
+	},
+	"files": ["dist"],
 	"type": "commonjs",
-	"dependencies": {
-		"body-parser": "^1.19.0",
-		"express": "^4.17.1",
-		"fs": "^0.0.1-security",
-		"moment": "^2.29.1",
-		"multer": "^1.4.4",
-		"mysql-promise": "^5.0.0",
-		"nodemon": "^3.1.7"
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
 	},
+	"engines": { "node": ">=18" },
 	"scripts": {
-		"test": "echo \"Error: no test specified\" && exit 1",
-		"dev": "nodemon src/index.ts",
-		"start": "node src/index.ts"
+		"build": "tsc -p tsconfig.json",
+		"test": "npm run build && node test/engine.test.cjs",
+		"prepack": "npm run build",
+		"prepublishOnly": "npm test",
+		"bump:patch": "npm version patch --no-git-tag-version",
+		"bump:minor": "npm version minor --no-git-tag-version",
+		"bump:major": "npm version major --no-git-tag-version",
+		"release:check": "npm publish --dry-run --access public",
+		"release": "npm publish --access public"
 	},
-	"author": "",
-	"license": "ISC",
+	"peerDependencies": {
+		"react": "^18.0.0 || ^19.0.0",
+		"react-dom": "^18.0.0 || ^19.0.0"
+	},
+	"peerDependenciesMeta": {
+		"react": { "optional": true },
+		"react-dom": { "optional": true }
+	},
 	"devDependencies": {
-		"@types/express": "^5.0.0",
-		"@types/multer": "^1.4.12",
-		"ts-node": "^10.9.2",
+		"@types/node": "^22.0.0",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
 		"typescript": "^5.6.3"
-	}
+	},
+	"license": "ISC"
 }
